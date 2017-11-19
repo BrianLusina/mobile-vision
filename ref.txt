@@ -1,0 +1,5 @@
+
+https://github.com/joaobiriba/ARCalories/tree/computer_vision
+https://medium.com/@srobtweets/adding-computer-vision-to-your-ios-app-66d6f540cdd2
+https://android.jlelse.eu/6-steps-to-add-computer-vision-super-powers-to-your-kotlin-android-app-ed199f478f22
+
