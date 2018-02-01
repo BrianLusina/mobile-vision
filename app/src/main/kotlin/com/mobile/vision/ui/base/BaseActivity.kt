@@ -66,18 +66,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseView, BaseFragment.Callba
         super.onDestroy()
     }
 
-    override fun setPasswordError(errorMessage: Int) {
-        setPasswordError(getString(errorMessage))
-    }
-
-    override fun setPasswordError(errorMessage: String) {}
-
-    override fun setUsernameError(errorMessage: String) {}
-
-    override fun setUsernameError(errorMessage: Int) {
-        setUsernameError(getString(errorMessage))
-    }
-
     /**
      * Hides keyboard
      */

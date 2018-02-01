@@ -1,6 +1,5 @@
 package com.mobile.vision.ui.main
 
-import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -56,7 +55,6 @@ class MainActivity : BaseActivity(), MainView, View.OnClickListener {
     }
 
     override fun setupListeners() {
-        aiService.setListener(this)
         addBtn.setOnClickListener(this)
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -79,13 +77,6 @@ class MainActivity : BaseActivity(), MainView, View.OnClickListener {
             override fun afterTextChanged(s: Editable) {}
         })
     }
-
-    override fun requestAudioPermission() {
-        if (!hasPermission(Manifest.permission.RECORD_AUDIO)) {
-            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), audioRequestPermissionCode)
-        }
-    }
-
 
     override fun onClick(view: View?) {
         when (view?.id) {

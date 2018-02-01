@@ -9,15 +9,6 @@ import com.mobile.vision.ui.base.BaseView
 interface MainView : BaseView {
 
     /**
-     * callback for when the mainAdapter and recycler are setup
-     * */
-    fun setupAdapterAndRecycler()
-
-    /**
-     * request audio permission*/
-    fun requestAudioPermission()
-
-    /**
      * sets up listeners
      * */
     fun setupListeners()
