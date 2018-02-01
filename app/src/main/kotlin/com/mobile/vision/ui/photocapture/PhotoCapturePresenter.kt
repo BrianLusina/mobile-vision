@@ -1,5 +1,6 @@
 package com.mobile.vision.ui.photocapture
 
+import android.net.Uri
 import android.os.Bundle
 import com.mobile.vision.ui.base.BasePresenter
 
@@ -22,12 +23,47 @@ interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
     fun onViewCreated(savedInstanceState: Bundle?)
 
     /**
-     * Callback for when the send message button is clicked
+     * callback for when the Take picture button is clicked
      * */
-    fun onSendMessageClicked(message: String)
+    fun onTakePictureButtonClicked()
 
     /**
-     * callback for when the audion button is clicked
+     * On upload picture button clicked. weill upload the picture to
+     * Cloud Vision API
      * */
-    fun onAudioButtonClicked()
+    fun onUploadPictureButtonClicked()
+
+    /**
+     * On Picking a picture From gallery for upload
+     * */
+    fun onPickPictureButtonClicked()
+
+    /**
+     * On permission granted callback we can proceed with the action that required user permission
+     * */
+    fun onPermissionGranted()
+
+    /**
+     * On permission denied callback that is used to launch a Rationale dialog
+     * as to why permissions are being requested
+     * */
+    fun onPermissionDenied()
+
+    fun onTakePicture() : Uri?
+
+    /**
+     * On Activity result success
+     * */
+    fun onActivityResultSuccess()
+
+    /**
+     * On Activity result failed
+     * */
+    fun onActivityResultFailed()
+
+    /**
+     * Request to resample picture
+     * */
+    fun onResamplePicRequest()
+
 }

@@ -99,7 +99,7 @@ android {
             debuggable false
             minifyEnabled true
             shrinkResources true
-            resValue "string", "app_name", "ChatBot"
+            resValue "string", "app_name", "MobileVision"
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -110,7 +110,7 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             applicationIdSuffix ".debug"
             testCoverageEnabled true
-            resValue "string", "app_name", "ChatBot-dev"
+            resValue "string", "app_name", "MobileVision-dev"
         }
     }
 

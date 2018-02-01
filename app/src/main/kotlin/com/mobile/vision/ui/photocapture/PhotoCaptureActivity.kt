@@ -1,8 +1,13 @@
 package com.mobile.vision.ui.photocapture
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -11,13 +16,18 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import com.mobile.vision.R
 import com.mobile.vision.ui.base.BaseActivity
+import com.mobile.vision.utils.resamplePicUtil
+import kotlinx.android.synthetic.main.activity_pic_capture.*
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 
 class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListener {
 
-    var flagFab: Boolean = true
-    private val audioRequestPermissionCode = 1
+    private var mResultsBitmap: Bitmap? = null
+
+    private val requestImageCapture = 1
+    private val requestStoragePermission = 1
 
     @Inject
     lateinit var photoCapturePresenter: PhotoCapturePresenter<PhotoCaptureView>
@@ -54,69 +64,133 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     }
 
     override fun setupListeners() {
-        addBtn.setOnClickListener(this)
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                val sendImg = BitmapFactory.decodeResource(resources,
-                        R.drawable.ic_send_white_24dp)
-                val micImage = BitmapFactory.decodeResource(resources,
-                        R.drawable.ic_mic_white_24dp)
-
-                if (s.toString().trim { it <= ' ' }.isNotEmpty() && flagFab) {
-                    imageViewAnimatedChange(fabImgView, sendImg)
-                    flagFab = false
-                } else if (s.toString().trim { it <= ' ' }.isEmpty()) {
-                    imageViewAnimatedChange(fabImgView, micImage)
-                    flagFab = true
-                }
-            }
-
-            override fun afterTextChanged(s: Editable) {}
-        })
+        button_pick_picture.setOnClickListener(this)
+        button_take_picture.setOnClickListener(this)
+        button_upload_picture.setOnClickListener(this)
+        fab_clear.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
-        when (view?.id) {
-            R.id.addBtn -> {
-                val message = editText.text.toString().trim { it <= ' ' }
-                if (!message.isEmpty()) {
-                    photoCapturePresenter.onSendMessageClicked(message)
-                    editText.setText("")
+        when (view) {
+            button_pick_picture -> {
+                // pick picture from gallery
+                photoCapturePresenter.onPickPictureButtonClicked()
+            }
+
+            button_take_picture -> {
+                // take picture with camera
+                photoCapturePresenter.onTakePictureButtonClicked()
+            }
+
+            button_upload_picture -> {
+                // upload given picture to Vision API
+                
+            }
+        }
+    }
+
+    override fun takePicture() {
+        if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // If you do not have permission, request it
+            requestPermissionsSafely(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), requestStoragePermission)
+        } else {
+            // Launch the camera if the permission exists
+            launchCamera()
+        }
+    }
+
+    override fun launchCamera() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // ensure that there is a camera activity to handle the intent
+        if(takePictureIntent.resolveActivity(packageManager) != null){
+            val photoUri = photoCapturePresenter.onTakePicture()
+            if(photoUri != null){
+                // store the picture so the camera can save the image
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+
+                // launch camera activity
+                startActivityForResult(takePictureIntent, requestImageCapture)
+            }else{
+                toast("Could not launch camera")
+            }
+        }else{
+            toast("Your Device does not support taking pictures")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when(resultCode) {
+            Activity.RESULT_OK -> {
+                if(requestCode == requestImageCapture){
+                    // process the image and set it to the image view
+                    photoCapturePresenter.onActivityResultSuccess()
+                }
+            }
+            Activity.RESULT_CANCELED -> {
+                // otherwise delete the temporary image
+                photoCapturePresenter.onActivityResultFailed()
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        // Called when you request permission to read and write to external storage
+        when (requestCode) {
+            requestStoragePermission -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    photoCapturePresenter.onPermissionGranted()
+                } else {
+                    photoCapturePresenter.onPermissionDenied()
                 }
             }
         }
     }
 
-    /**
-     * Animation change handler for the send button
-     * */
-    private fun imageViewAnimatedChange(v: ImageView, new_image: Bitmap) {
-        val animOut = AnimationUtils.loadAnimation(this, R.anim.zoom_out)
-        val animIn = AnimationUtils.loadAnimation(this, R.anim.zoom_in)
-        animOut.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {}
-            override fun onAnimationRepeat(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {
-                v.setImageBitmap(new_image)
-                animIn.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationStart(animation: Animation) {}
-                    override fun onAnimationRepeat(animation: Animation) {}
-                    override fun onAnimationEnd(animation: Animation) {}
-                })
-                v.startAnimation(animIn)
-            }
-        })
-        v.startAnimation(animOut)
+    override fun processAndSetImage() {
+        // make views visible
+        image_view.visibility = View.VISIBLE
+        button_upload_picture.visibility = View.VISIBLE
+        fab_clear.visibility = View.VISIBLE
+
+        // hide views
+        button_take_picture.visibility = View.GONE
+        button_pick_picture.visibility = View.GONE
+
+        photoCapturePresenter.onResamplePicRequest()
     }
 
-    /**
-     * What should we do with the permissions we now have?
-     * */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == audioRequestPermissionCode) {
+    override fun resamplePic(photoPath: String) {
+        mResultsBitmap = resamplePicUtil(this, photoPath)
+        image_view.setImageBitmap(mResultsBitmap)
+    }
 
+    override fun clearImage(isFileDeleted: Boolean) {
+        // Clear the image and toggle the view visibility
+        image_view.setImageResource(0)
+        button_pick_picture.visibility = View.VISIBLE
+        button_take_picture.visibility = View.VISIBLE
+        button_upload_picture.visibility = View.GONE
+        fab_clear.visibility = View.GONE
+
+        // If there is an error deleting the file, show a Toast
+        if (!isFileDeleted) {
+            toast(R.string.error_delete_failure)
         }
+    }
+
+    override fun notifyUserOfSavedImage(savedPhotoLocation: String?) {
+        if (savedPhotoLocation != null) {
+            // Show a Toast with the save location
+            toast(getString(R.string.msg_image_saved_location, savedPhotoLocation))
+        } else {
+            toast(R.string.error_image_not_saved)
+        }
+    }
+
+    override fun displayPermissionRationale() {
+        // dialog with Taionale as to why we need this permission
+        // todo
+        toast(R.string.msg_permission_denied)
     }
 }
