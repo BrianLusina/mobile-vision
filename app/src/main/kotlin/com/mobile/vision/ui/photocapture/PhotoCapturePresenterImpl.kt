@@ -36,6 +36,7 @@ constructor(mDataManager: DataManager,
     override fun onPickImageRequestSuccess(filePath: Uri?) {
         // store the filepath to shared preference file
         filePath?.toString()?.let { dataManager.saveImageFilePath(sharedPrefsKey, it) }
+        baseView.processAndSetImage()
     }
 
     override fun onPickPictureButtonClicked() {
