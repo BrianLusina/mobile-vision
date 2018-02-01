@@ -1,4 +1,4 @@
-package com.mobile.vision.ui.main
+package com.mobile.vision.ui.photocapture
 
 import android.os.Bundle
 import com.mobile.vision.ui.base.BasePresenter
@@ -7,7 +7,7 @@ import com.mobile.vision.ui.base.BasePresenter
  * @author lusinabrian on 20/09/17.
  * @Notes Presenter layer
  */
-interface MainPresenter<V : MainView> : BasePresenter<V> {
+interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
 
     /**
      * on Start

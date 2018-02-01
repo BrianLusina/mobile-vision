@@ -1,4 +1,4 @@
-package com.mobile.vision.ui.main
+package com.mobile.vision.ui.photocapture
 
 import com.mobile.vision.ui.base.BaseView
 
@@ -6,7 +6,7 @@ import com.mobile.vision.ui.base.BaseView
  * @author lusinabrian on 20/09/17.
  * @Notes view for main activity
  */
-interface MainView : BaseView {
+interface PhotoCaptureView : BaseView {
 
     /**
      * sets up listeners

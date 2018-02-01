@@ -4,7 +4,13 @@ import android.app.Application
 import android.content.Context
 import com.mobile.vision.data.DataManager
 import com.mobile.vision.data.DataManagerImpl
+import com.mobile.vision.data.files.FileHelper
+import com.mobile.vision.data.files.FileHelperImpl
+import com.mobile.vision.data.prefs.SharedPrefsHelper
+import com.mobile.vision.data.prefs.SharedPrefsHelperImpl
 import com.mobile.vision.di.qualifier.AppCtxQualifier
+import com.mobile.vision.di.qualifier.PreferenceInfo
+import com.mobile.vision.utils.SHARED_PREFS_NAME
 import dagger.Module
 import dagger.Provides
 import io.reactivex.subjects.PublishSubject
@@ -30,9 +36,27 @@ class AppModule(private val mApplication: Application) {
     }
 
     @Provides
+    @PreferenceInfo
+    fun provideSharedPrefsName(): String{
+        return SHARED_PREFS_NAME
+    }
+
+    @Provides
     @Singleton
     fun provideDataManager(dataManager: DataManagerImpl): DataManager {
         return dataManager
+    }
+
+    @Provides
+    @Singleton
+    fun provideFileHelper(fileHelper: FileHelperImpl): FileHelper {
+        return fileHelper
+    }
+
+    @Provides
+    @Singleton
+    fun providePrefsHelper(sharedPrefsHelper: SharedPrefsHelperImpl): SharedPrefsHelper {
+        return sharedPrefsHelper
     }
 
     @Provides

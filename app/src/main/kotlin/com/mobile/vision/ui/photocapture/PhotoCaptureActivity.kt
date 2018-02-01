@@ -1,4 +1,4 @@
-package com.mobile.vision.ui.main
+package com.mobile.vision.ui.photocapture
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,46 +11,45 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import com.mobile.vision.R
 import com.mobile.vision.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
-class MainActivity : BaseActivity(), MainView, View.OnClickListener {
+class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListener {
 
     var flagFab: Boolean = true
     private val audioRequestPermissionCode = 1
 
     @Inject
-    lateinit var mainPresenter: MainPresenter<MainView>
+    lateinit var photoCapturePresenter: PhotoCapturePresenter<PhotoCaptureView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_pic_capture)
 
-        activityComponent.injectMainActivity(this)
+        activityComponent.injectPhotoCaptureActivity(this)
 
-        mainPresenter.onAttach(this)
+        photoCapturePresenter.onAttach(this)
 
-        mainPresenter.onViewCreated(savedInstanceState)
+        photoCapturePresenter.onViewCreated(savedInstanceState)
     }
 
     override fun onStart() {
         super.onStart()
-        mainPresenter.onStart()
+        photoCapturePresenter.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        mainPresenter.onResume()
+        photoCapturePresenter.onResume()
     }
 
     override fun onStop() {
-        mainPresenter.onDetach()
+        photoCapturePresenter.onDetach()
         super.onStop()
     }
 
     override fun onDestroy() {
-        mainPresenter.onDetach()
+        photoCapturePresenter.onDetach()
         super.onDestroy()
     }
 
@@ -83,7 +82,7 @@ class MainActivity : BaseActivity(), MainView, View.OnClickListener {
             R.id.addBtn -> {
                 val message = editText.text.toString().trim { it <= ' ' }
                 if (!message.isEmpty()) {
-                    mainPresenter.onSendMessageClicked(message)
+                    photoCapturePresenter.onSendMessageClicked(message)
                     editText.setText("")
                 }
             }
