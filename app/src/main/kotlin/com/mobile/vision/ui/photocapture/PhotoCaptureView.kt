@@ -33,6 +33,11 @@ interface PhotoCaptureView : BaseView {
     fun processAndSetImage()
 
     /**
+     * Opens users Gallery for them to pick a picture
+     * */
+    fun chooseImageFromGallery()
+
+    /**
      * Notify user of saved photo location
      * @param savedPhotoLocation
      * */

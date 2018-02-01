@@ -5,29 +5,28 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import com.mobile.vision.R
 import com.mobile.vision.ui.base.BaseActivity
 import com.mobile.vision.utils.resamplePicUtil
 import kotlinx.android.synthetic.main.activity_pic_capture.*
+import org.jetbrains.anko.error
 import org.jetbrains.anko.toast
+import java.io.IOException
 import javax.inject.Inject
 
 
 class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListener {
 
     private var mResultsBitmap: Bitmap? = null
+    private var filePath: Uri? = null
 
     private val requestImageCapture = 1
     private val requestStoragePermission = 1
+    private val pickImageRequest = 12345
 
     @Inject
     lateinit var photoCapturePresenter: PhotoCapturePresenter<PhotoCaptureView>
@@ -39,8 +38,6 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         activityComponent.injectPhotoCaptureActivity(this)
 
         photoCapturePresenter.onAttach(this)
-
-        photoCapturePresenter.onViewCreated(savedInstanceState)
     }
 
     override fun onStart() {
@@ -84,9 +81,20 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
 
             button_upload_picture -> {
                 // upload given picture to Vision API
-                
+
+            }
+
+            fab_clear -> {
+                photoCapturePresenter.onClearButtonClicked()
             }
         }
+    }
+
+    override fun chooseImageFromGallery() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Pick a photo"), pickImageRequest)
     }
 
     override fun takePicture() {
@@ -102,28 +110,41 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     override fun launchCamera() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         // ensure that there is a camera activity to handle the intent
-        if(takePictureIntent.resolveActivity(packageManager) != null){
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
             val photoUri = photoCapturePresenter.onTakePicture()
-            if(photoUri != null){
+            if (photoUri != null) {
                 // store the picture so the camera can save the image
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
 
                 // launch camera activity
                 startActivityForResult(takePictureIntent, requestImageCapture)
-            }else{
+            } else {
                 toast("Could not launch camera")
             }
-        }else{
+        } else {
             toast("Your Device does not support taking pictures")
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when(resultCode) {
+        when (resultCode) {
             Activity.RESULT_OK -> {
-                if(requestCode == requestImageCapture){
-                    // process the image and set it to the image view
-                    photoCapturePresenter.onActivityResultSuccess()
+                when (requestCode) {
+                    requestImageCapture -> {
+                        // process the image and set it to the image view
+                        photoCapturePresenter.onActivityResultSuccess()
+                    }
+                    pickImageRequest -> {
+                        if (data != null && data.data != null) {
+                            filePath = data.data
+                            try {
+                                photoCapturePresenter.onPickImageRequestSuccess(filePath)
+                            } catch (ioe: IOException) {
+                                error("Error Retrieving Image with error ${ioe.message}")
+                                // todo: log to external service
+                            }
+                        }
+                    }
                 }
             }
             Activity.RESULT_CANCELED -> {

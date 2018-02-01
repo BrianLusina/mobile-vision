@@ -20,8 +20,6 @@ interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
      * */
     fun onResume()
 
-    fun onViewCreated(savedInstanceState: Bundle?)
-
     /**
      * callback for when the Take picture button is clicked
      * */
@@ -37,6 +35,16 @@ interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
      * On Picking a picture From gallery for upload
      * */
     fun onPickPictureButtonClicked()
+
+    /**
+     * Pick image request success and we take the file path uri and upload it
+     * to VisionAPi*/
+    fun onPickImageRequestSuccess(filePath : Uri?)
+
+    /**
+     * Clears the given image if available
+     * */
+    fun onClearButtonClicked()
 
     /**
      * On permission granted callback we can proceed with the action that required user permission

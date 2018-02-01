@@ -33,15 +33,17 @@ constructor(mDataManager: DataManager,
         baseView.setupListeners()
     }
 
-    override fun onViewCreated(savedInstanceState: Bundle?) {
-
+    override fun onPickImageRequestSuccess(filePath: Uri?) {
+        // store the filepath to shared preference file
+        filePath?.toString()?.let { dataManager.saveImageFilePath(sharedPrefsKey, it) }
     }
 
     override fun onPickPictureButtonClicked() {
-
+        baseView.chooseImageFromGallery()
     }
 
     override fun onUploadPictureButtonClicked() {
+        // upload given picture to vision API
 
     }
 
@@ -61,6 +63,12 @@ constructor(mDataManager: DataManager,
         val (tempImageFile, photoUri)= dataManager.createTempImageFile()
         tempImageFile?.absolutePath?.let { dataManager.saveImageFilePath(sharedPrefsKey, it) }
         return photoUri
+    }
+
+    override fun onClearButtonClicked() {
+        val photoPath = dataManager.getImageFilePath(sharedPrefsKey)
+        val isFileDeleted = dataManager.deleteImageFile(photoPath)
+        baseView.clearImage(isFileDeleted)
     }
 
     override fun onActivityResultSuccess() {
