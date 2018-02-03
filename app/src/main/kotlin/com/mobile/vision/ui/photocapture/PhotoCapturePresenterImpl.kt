@@ -36,6 +36,7 @@ constructor(mDataManager: DataManager,
     override fun onPickImageRequestSuccess(filePath: Uri?) {
         // store the filepath to shared preference file
         filePath?.toString()?.let { dataManager.saveImageFilePath(sharedPrefsKey, it) }
+        baseView.makeViewsVisible(true)
         baseView.processAndSetImage()
     }
 
@@ -49,7 +50,8 @@ constructor(mDataManager: DataManager,
 
     override fun onUploadPictureButtonClicked() {
         // upload given picture to vision API
-
+        val photoPath = dataManager.getImageFilePath(sharedPrefsKey)
+        dataManager.uploadImageFile(photoPath)
     }
 
     override fun onTakePictureButtonClicked() {
@@ -73,10 +75,13 @@ constructor(mDataManager: DataManager,
     override fun onClearButtonClicked() {
         val photoPath = dataManager.getImageFilePath(sharedPrefsKey)
         val isFileDeleted = dataManager.deleteImageFile(photoPath)
+
+        baseView.makeViewsVisible(false)
         baseView.clearImage(isFileDeleted)
     }
 
     override fun onActivityResultSuccess() {
+        baseView.makeViewsVisible(true)
         baseView.processAndSetImage()
     }
 

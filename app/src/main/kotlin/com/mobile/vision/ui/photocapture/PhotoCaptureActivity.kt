@@ -81,7 +81,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
 
             button_upload_picture -> {
                 // upload given picture to Vision API
-
+                photoCapturePresenter.onUploadPictureButtonClicked()
             }
 
             fab_clear -> {
@@ -136,10 +136,10 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
                     }
                     pickImageRequest -> {
                         if (data != null) {
-                            filePath = data.data
+                            filePath = checkNotNull(data.data)
                             try {
-                                filePath = checkNotNull(filePath)
                                 try {
+                                    mResultsBitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
                                     photoCapturePresenter.onPickImageRequestSuccess(filePath)
                                 } catch (ioe: IOException) {
                                     error("Error Retrieving Image with error ${ioe.message}")
@@ -179,9 +179,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     override fun makeViewsVisible(imageAvailable: Boolean) {
         if (imageAvailable) {
             // make views visible
-            coordinator_image_container.visibility = View.GONE
-            // image_view.visibility = View.VISIBLE
-            // fab_clear.visibility = View.VISIBLE
+            coordinator_image_container.visibility = View.VISIBLE
             button_upload_picture.visibility = View.VISIBLE
 
             // hide views
@@ -190,8 +188,6 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         } else {
             // Clear the image and toggle the view visibility
             coordinator_image_container.visibility = View.GONE
-            // image_view.visibility = View.GONE
-            // fab_clear.visibility = View.GONE
 
             button_pick_picture.visibility = View.VISIBLE
             button_take_picture.visibility = View.VISIBLE
@@ -200,7 +196,6 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     }
 
     override fun processAndSetImage() {
-        makeViewsVisible(true)
         photoCapturePresenter.onResamplePicRequest()
     }
 
@@ -210,8 +205,6 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     }
 
     override fun clearImage(isFileDeleted: Boolean) {
-        makeViewsVisible(false)
-
         // If there is an error deleting the file, show a Toast
         if (!isFileDeleted) {
             toast(R.string.error_delete_failure)

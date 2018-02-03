@@ -46,7 +46,6 @@ class MobileVisionApp : Application(){
         MultiDex.install(this)
     }
 
-
     /**
      * Registers Connectivity Manager for devcies on API level 21 and up*/
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

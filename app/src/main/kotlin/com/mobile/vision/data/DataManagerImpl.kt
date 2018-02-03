@@ -37,4 +37,14 @@ constructor(val apiHelper: ApiHelper, val prefsHelper: SharedPrefsHelper, val fi
     override fun createTempImageFile(): Pair<File?, Uri> {
         return fileHelper.createTempImageFile()
     }
+
+    override fun uploadImageFile(filePath: String) {
+        apiHelper.uploadImageFile(filePath)
+    }
+
+    override fun retrieveVisionApiData() {
+    }
+
+    override fun parseVisionApiResponse() {
+    }
 }
