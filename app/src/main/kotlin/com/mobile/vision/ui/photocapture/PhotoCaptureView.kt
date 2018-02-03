@@ -14,6 +14,14 @@ interface PhotoCaptureView : BaseView {
     fun setupListeners()
 
     /**
+     * Make views visible
+     * This takes in a boolean value, that we can use to either make views visible or not
+     * @param imageAvailable If set to True, the pick image and take photo buttons are made INVISIBLE
+     * otherwise the image is made available
+     * */
+    fun makeViewsVisible(imageAvailable: Boolean)
+
+    /**
      * Launches the device's camera
      * */
     fun launchCamera()

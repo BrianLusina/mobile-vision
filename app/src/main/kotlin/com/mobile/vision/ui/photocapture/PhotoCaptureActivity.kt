@@ -135,13 +135,21 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
                         photoCapturePresenter.onActivityResultSuccess()
                     }
                     pickImageRequest -> {
-                        if (data != null && data.data != null) {
+                        if (data != null) {
                             filePath = data.data
                             try {
-                                photoCapturePresenter.onPickImageRequestSuccess(filePath)
-                            } catch (ioe: IOException) {
-                                error("Error Retrieving Image with error ${ioe.message}")
-                                // todo: log to external service
+                                filePath = checkNotNull(filePath)
+                                try {
+                                    photoCapturePresenter.onPickImageRequestSuccess(filePath)
+                                } catch (ioe: IOException) {
+                                    error("Error Retrieving Image with error ${ioe.message}")
+                                    // todo: log to external service
+                                    photoCapturePresenter.onPickImageRequestFailed()
+                                }
+                            } catch (ise: IllegalStateException) {
+                                error("Failed to load image with error ${ise.message}", ise)
+                                toast("Could not load image")
+                                photoCapturePresenter.onPickImageRequestFailed()
                             }
                         }
                     }
@@ -168,16 +176,31 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         }
     }
 
+    override fun makeViewsVisible(imageAvailable: Boolean) {
+        if (imageAvailable) {
+            // make views visible
+            coordinator_image_container.visibility = View.GONE
+            // image_view.visibility = View.VISIBLE
+            // fab_clear.visibility = View.VISIBLE
+            button_upload_picture.visibility = View.VISIBLE
+
+            // hide views
+            button_take_picture.visibility = View.GONE
+            button_pick_picture.visibility = View.GONE
+        } else {
+            // Clear the image and toggle the view visibility
+            coordinator_image_container.visibility = View.GONE
+            // image_view.visibility = View.GONE
+            // fab_clear.visibility = View.GONE
+
+            button_pick_picture.visibility = View.VISIBLE
+            button_take_picture.visibility = View.VISIBLE
+            button_upload_picture.visibility = View.GONE
+        }
+    }
+
     override fun processAndSetImage() {
-        // make views visible
-        image_view.visibility = View.VISIBLE
-        button_upload_picture.visibility = View.VISIBLE
-        fab_clear.visibility = View.VISIBLE
-
-        // hide views
-        button_take_picture.visibility = View.GONE
-        button_pick_picture.visibility = View.GONE
-
+        makeViewsVisible(true)
         photoCapturePresenter.onResamplePicRequest()
     }
 
@@ -187,12 +210,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     }
 
     override fun clearImage(isFileDeleted: Boolean) {
-        // Clear the image and toggle the view visibility
-        image_view.setImageResource(0)
-        button_pick_picture.visibility = View.VISIBLE
-        button_take_picture.visibility = View.VISIBLE
-        button_upload_picture.visibility = View.GONE
-        fab_clear.visibility = View.GONE
+        makeViewsVisible(false)
 
         // If there is an error deleting the file, show a Toast
         if (!isFileDeleted) {

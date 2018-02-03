@@ -43,6 +43,10 @@ constructor(mDataManager: DataManager,
         baseView.chooseImageFromGallery()
     }
 
+    override fun onPickImageRequestFailed() {
+        baseView.makeViewsVisible(false)
+    }
+
     override fun onUploadPictureButtonClicked() {
         // upload given picture to vision API
 

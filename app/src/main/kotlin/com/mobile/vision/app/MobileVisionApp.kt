@@ -13,6 +13,7 @@ import android.support.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.auth.FirebaseAuth
 import com.mobile.vision.di.components.AppComponent
+import com.mobile.vision.di.components.DaggerAppComponent
 import com.mobile.vision.di.modules.AppModule
 import com.mobile.vision.di.modules.FirebaseModule
 import io.fabric.sdk.android.Fabric
@@ -37,8 +38,6 @@ class MobileVisionApp : Application(){
 
         Fabric.with(this, Crashlytics())
 
-        logUser()
-
         registerConnectivityManager()
     }
 
@@ -47,18 +46,6 @@ class MobileVisionApp : Application(){
         MultiDex.install(this)
     }
 
-    /**
-     * Logs the user to Crashlytics if the exist
-     * */
-    private fun logUser() {
-        val firebaseUser = firebaseAuth.currentUser
-
-        if(firebaseUser != null){
-            Crashlytics.setUserIdentifier(firebaseUser.uid)
-            Crashlytics.setUserEmail(firebaseUser.email)
-            Crashlytics.setUserName(firebaseUser.displayName)
-        }
-    }
 
     /**
      * Registers Connectivity Manager for devcies on API level 21 and up*/

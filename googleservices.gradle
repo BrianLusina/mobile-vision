@@ -23,5 +23,5 @@ task switchToRelease(type: Copy) {
 
 afterEvaluate{
     processDebugGoogleServices.dependsOn switchToDebug
-    processReleaseGoogleServices.dependsOn switchToRelease
+    //processReleaseGoogleServices.dependsOn switchToRelease
 }

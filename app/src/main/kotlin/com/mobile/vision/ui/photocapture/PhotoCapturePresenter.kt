@@ -37,6 +37,12 @@ interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
     fun onPickPictureButtonClicked()
 
     /**
+     * On Pick image request failed
+     * This will handle errors when wecould not get an image from gallery
+     * */
+    fun onPickImageRequestFailed()
+
+    /**
      * Pick image request success and we take the file path uri and upload it
      * to VisionAPi*/
     fun onPickImageRequestSuccess(filePath : Uri?)
