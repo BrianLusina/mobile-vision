@@ -28,7 +28,7 @@ class FirebaseModule {
     @Provides
     @Singleton
     @StorageReferenceInfo
-    fun provideStorageReference(@PreferenceInfo firebaseStorage : FirebaseStorage) : StorageReference{
+    fun provideStorageReference(@FirebaseStorageInfo firebaseStorage : FirebaseStorage) : StorageReference{
        return firebaseStorage.reference
     }
 

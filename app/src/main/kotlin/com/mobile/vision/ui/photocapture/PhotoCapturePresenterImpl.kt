@@ -80,8 +80,7 @@ constructor(mDataManager: DataManager,
         baseView.clearImage(isFileDeleted)
     }
 
-    override fun onActivityResultSuccess() {
-        baseView.makeViewsVisible(true)
+    override fun onImageCaptureSuccess() {
         baseView.processAndSetImage()
     }
 
@@ -93,6 +92,8 @@ constructor(mDataManager: DataManager,
     override fun onResamplePicRequest() {
         val photoPath = dataManager.getImageFilePath(sharedPrefsKey)
         baseView.resamplePic(photoPath)
+        // after resampling the pic, we can now make the picture visible
+        baseView.makeViewsVisible(true)
     }
 
     override fun onDetach() {

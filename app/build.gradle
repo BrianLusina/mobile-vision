@@ -24,6 +24,8 @@ ext {
     // GSON VERSION
     gsonVersion = "2.8.1"
 
+    eventBusVersion = "3.0.0"
+
     // anko version
     ankoVersion = "0.10.1"
 
@@ -234,6 +236,9 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rxjava2Version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroidVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+
+    // event bus
+    implementation "org.greenrobot:eventbus:$eventBusVersion"
 
     //********************* Anko Commons ****************************
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"

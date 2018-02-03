@@ -7,6 +7,7 @@ import com.mobile.vision.app.MobileVisionApp
 import com.mobile.vision.data.DataManager
 import com.mobile.vision.di.modules.ApiModule
 import com.mobile.vision.di.modules.AppModule
+import com.mobile.vision.di.modules.EventBusModule
 import com.mobile.vision.di.modules.FirebaseModule
 import dagger.Component
 import io.reactivex.subjects.PublishSubject
@@ -18,7 +19,7 @@ import javax.inject.Singleton
  * @Notes app component
  */
 @Singleton
-@Component(modules = [(AppModule::class), (FirebaseModule::class), ApiModule::class])
+@Component(modules = [(AppModule::class), (FirebaseModule::class), ApiModule::class, EventBusModule::class])
 interface AppComponent {
     fun injectApp(mobileVisionApp: MobileVisionApp)
 

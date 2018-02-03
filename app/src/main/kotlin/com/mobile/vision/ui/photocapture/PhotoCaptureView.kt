@@ -40,6 +40,10 @@ interface PhotoCaptureView : BaseView {
 
     fun processAndSetImage()
 
+    fun displayImageUploadProgressBar()
+
+    fun displayImageUploadFailure()
+
     /**
      * Opens users Gallery for them to pick a picture
      * */

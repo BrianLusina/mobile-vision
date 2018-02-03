@@ -13,10 +13,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.mobile.vision.R
 import com.mobile.vision.app.MobileVisionApp
-import com.mobile.vision.di.components.ActivityComponent
-import com.mobile.vision.di.components.AppComponent
-import com.mobile.vision.di.components.DaggerActivityComponent
+import com.mobile.vision.di.components.*
 import com.mobile.vision.di.modules.ActivityModule
+import com.mobile.vision.di.modules.EventBusModule
 import org.jetbrains.anko.AnkoLogger
 
 /**
@@ -28,6 +27,12 @@ import org.jetbrains.anko.AnkoLogger
 abstract class BaseActivity : AppCompatActivity(), BaseView, BaseFragment.Callback, AnkoLogger {
 
     val appComponent : AppComponent by lazy { (application as MobileVisionApp).appComponent }
+
+    val eventBusComponent : EventBusComponent by lazy {
+        DaggerEventBusComponent.builder()
+                .eventBusModule(EventBusModule())
+                .build()
+    }
 
     // fields
     val activityComponent: ActivityComponent by lazy{

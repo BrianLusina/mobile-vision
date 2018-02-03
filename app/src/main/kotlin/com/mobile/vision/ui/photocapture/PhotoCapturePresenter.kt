@@ -68,7 +68,7 @@ interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
     /**
      * On Activity result success
      * */
-    fun onActivityResultSuccess()
+    fun onImageCaptureSuccess()
 
     /**
      * On Activity result failed

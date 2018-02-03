@@ -9,9 +9,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.ProgressBar
 import com.mobile.vision.R
 import com.mobile.vision.ui.base.BaseActivity
 import com.mobile.vision.utils.resamplePicUtil
+import io.reactivex.internal.subscriptions.ArrayCompositeSubscription
 import kotlinx.android.synthetic.main.activity_pic_capture.*
 import org.jetbrains.anko.error
 import org.jetbrains.anko.toast
@@ -30,6 +32,10 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
 
     @Inject
     lateinit var photoCapturePresenter: PhotoCapturePresenter<PhotoCaptureView>
+
+    val progressBar : ProgressBar by lazy {
+        ProgressBar(this, null, android.R.attr.progressBarStyleSmall)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +71,8 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         button_take_picture.setOnClickListener(this)
         button_upload_picture.setOnClickListener(this)
         fab_clear.setOnClickListener(this)
+
+        coordinator_image_container.visibility = View.GONE
     }
 
     override fun onClick(view: View?) {
@@ -132,7 +140,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
                 when (requestCode) {
                     requestImageCapture -> {
                         // process the image and set it to the image view
-                        photoCapturePresenter.onActivityResultSuccess()
+                        photoCapturePresenter.onImageCaptureSuccess()
                     }
                     pickImageRequest -> {
                         if (data != null) {
@@ -225,4 +233,29 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         // todo
         toast(R.string.msg_permission_denied)
     }
+
+    override fun displayImageUploadProgressBar() {
+        progressBar.visibility = View.VISIBLE
+        eventBusComponent.getImageUploadProgressSubject()
+                .subscribe({
+                    // display progress bar with percentages
+                    progressBar.progress = 100 * it
+                }, {
+                    progressBar.visibility = View.GONE
+                })
+    }
+
+    override fun displayImageUploadFailure() {
+        eventBusComponent.getImageUploadSubject()
+                .subscribe {
+                    if (it) {
+                        progressBar.visibility = View.GONE
+                        toast("Image Uploaded")
+                    } else {
+                        progressBar.visibility = View.GONE
+                        toast("Image failed to upload")
+                    }
+                }
+    }
+
 }

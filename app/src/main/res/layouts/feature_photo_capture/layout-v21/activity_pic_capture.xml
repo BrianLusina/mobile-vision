@@ -40,8 +40,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="@id/guideline_left"
         app:layout_constraintRight_toRightOf="@id/guideline_right"
-        app:layout_constraintTop_toTopOf="@id/guideline_top"
-        android:visibility="gone">
+        app:layout_constraintTop_toTopOf="@id/guideline_top">
 
         <ImageView
             android:id="@+id/image_view"
@@ -49,8 +48,7 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:contentDescription="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/bg_button_blue" />
+            android:scaleType="fitXY"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_clear"
