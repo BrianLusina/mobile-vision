@@ -1,8 +1,8 @@
 const functions = require('firebase-functions');
-const vision = require("@google-cloud/vision")();
+const vision = require("@google-cloud/vision");
 const admin = require("firebase-admin");
 
-admin.initializeApp(functions.Config().firebase);
+admin.initializeApp(functions.config().firebase);
 
 // todo:
 // remove console.log statments and replace with a Logging Service. Rollbar
@@ -18,10 +18,10 @@ exports.callVision = functions.storage.object().onChange(event => {
 		image: {source: {imageUri: gcsPath}},
       		features: [
 			{ 
-				type: Vision.v1.types.Feature.Type.WEB_DETECTION
+				type: vision.v1.types.Feature.Type.WEB_DETECTION
 			},
 			{ 
-				type: Vision.v1.types.Feature.Type.SAFE_SEARCH_DETECTION 
+				type: vision.v1.types.Feature.Type.SAFE_SEARCH_DETECTION 
 			}
 		],
 	};
