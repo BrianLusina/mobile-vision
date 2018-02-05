@@ -127,6 +127,18 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
+"@google-cloud/vision@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/vision/-/vision-0.15.0.tgz#7f997dcc24b732c83a76b7f18993e62fb70dd0c6"
+  dependencies:
+    "@google-cloud/common" "^0.15.1"
+    async "^2.0.1"
+    extend "^3.0.0"
+    google-gax "^0.14.2"
+    google-proto-files "^0.14.1"
+    is "^3.0.1"
+    lodash.merge "^4.6.0"
+
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
@@ -1271,7 +1283,7 @@ google-auto-auth@^0.9.0:
     google-auth-library "^0.12.0"
     request "^2.79.0"
 
-google-gax@^0.14.3:
+google-gax@^0.14.2, google-gax@^0.14.3:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/google-gax/-/google-gax-0.14.5.tgz#b2c73c61df6cead94f90421d17f44ff161f623c7"
   dependencies:

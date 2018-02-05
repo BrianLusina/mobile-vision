@@ -32,7 +32,7 @@ exports.callVision = functions.storage.object().onChange(event => {
 		return {web: webDetection, safe: safeSearch};
 	}).then((visionResponse) => {
 		let db = admin.firestore();
-		let imageRef = db.collection("images).doc(filePath.slice(7));
+		let imageRef = db.collection("images").doc(filePath.slice(7));
 		return imageRef.set(visionResponse);
 	}).catch(error => {
 		console.log('Vision API all failed with ', error);
