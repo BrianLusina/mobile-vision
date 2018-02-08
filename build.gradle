@@ -31,7 +31,6 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-
 /**
  * Gets the Chatbot service account email gradle.properties file, Ensure that you have a
  * gradle.properties file in root project directory
@@ -50,14 +49,26 @@ def getChatBotServiceAccountKey = { ->
  * Gets the Fabric API key from gradle.properties file
  * */
 def getFabricApiKey = { ->
-    try{
+    try {
         Properties properties = new Properties()
         properties.load(new FileInputStream("gradle.properties"))
         return properties.getProperty("FABRIC_API_KEY")
-    }catch (Exception ignored){
+    } catch (Exception ignored) {
         return ""
     }
 }
+
+/*Gets rollbar access token*/
+def getRollbarAccessToken = { ->
+    try {
+        Properties properties = new Properties()
+        properties.load(new FileInputStream("gradle.properties"))
+        return properties.getProperty("ROLLBAR_ACCESS_TOKEN")
+    } catch (Exception ignored) {
+        return ""
+    }
+}
+
 
 ext {
     keystorePropertiesFile = rootProject.file("keystores/keystore.properties")
@@ -69,6 +80,7 @@ ext {
     pJsonKeyFile = rootProject.file("keystores/chatbot_publish_key.json")
     serviceAccountEmail = getChatBotServiceAccountKey()
     fabricApiKey = getFabricApiKey()
+    rollbarAccessToken = getRollbarAccessToken()
 
     /**
      * Set this to true to create two separate APKs instead of one:

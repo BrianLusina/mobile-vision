@@ -35,6 +35,7 @@ ext {
     rxKotlinVersion = "2.1.0"
 
     crashlyticsVersion = "2.7.1@aar"
+    rollbarVersion ="1.0.0"
 }
 
 android {
@@ -63,7 +64,8 @@ android {
             }
         }
         playAccountConfig = playAccountConfigs.defaultAccountConfig
-        manifestPlaceholders = [fabricApiKey: rootProject.ext.fabricApiKey]
+        manifestPlaceholders = [fabricApiKey: rootProject.ext.fabricApiKey,
+                                rollbarAccessToken: rootProject.ext.rollbarAccessToken]
     }
 
     dataBinding {
@@ -203,8 +205,7 @@ android {
     }
 
     buildTypes.each {
-        it.buildConfigField "String", "API_AI_CLIENT_ACCESS_TOKEN", API_AI_CLIENT_ACCESS_TOKEN
-        it.buildConfigField "String", "API_AI_DEV_ACCESS_TOKEN", API_AI_DEV_ACCESS_TOKEN
+        it.buildConfigField "String", "ROLLBAR_ACCESS_TOKEN", ROLLBAR_ACCESS_TOKEN
     }
 
     compileOptions.incremental = false
@@ -254,6 +255,9 @@ dependencies {
         transitive = true
     }
 
+    // rollbar
+    implementation "com.rollbar:rollbar-java:$rollbarVersion"
+
     // ******************* TEST DEPENDENCIES ***************************
     testImplementation "junit:junit:$jUnitVersion"
     testImplementation "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion"
@@ -267,5 +271,6 @@ dependencies {
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$espressoVersion", {
         exclude group: "com.android.support", module: "support-annotations"
     })
+
 }
 apply plugin: "com.google.gms.google-services"

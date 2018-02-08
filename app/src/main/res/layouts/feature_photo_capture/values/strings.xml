@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_button_upload_picture">Upload</string>
+    <string name="action_button_cancel_picture">Cancel</string>
+
     <string name="action_button_pick_picture">Pick a Photo</string>
     <string name="action_button_take_picture">Take Picture</string>
 

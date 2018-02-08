@@ -1,5 +1,6 @@
 package com.mobile.vision.ui.photocapture
 
+import com.mobile.vision.data.events.ImageUploadEvent
 import com.mobile.vision.ui.base.BaseView
 
 /**
@@ -66,4 +67,10 @@ interface PhotoCaptureView : BaseView {
      * @param photoPath
      * */
     fun resamplePic(photoPath: String)
+
+    /**
+     * Subscriber method for the Image Upload event
+     * @param imageUploadEvent Image Upload Event from Event Bus
+     * */
+    fun onReceiveUploadImageEvent(imageUploadEvent: ImageUploadEvent)
 }

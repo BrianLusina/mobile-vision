@@ -11,10 +11,13 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.ProgressBar
 import com.mobile.vision.R
+import com.mobile.vision.data.events.ImageUploadEvent
 import com.mobile.vision.ui.base.BaseActivity
 import com.mobile.vision.utils.resamplePicUtil
-import io.reactivex.internal.subscriptions.ArrayCompositeSubscription
 import kotlinx.android.synthetic.main.activity_pic_capture.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.error
 import org.jetbrains.anko.toast
 import java.io.IOException
@@ -33,7 +36,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     @Inject
     lateinit var photoCapturePresenter: PhotoCapturePresenter<PhotoCaptureView>
 
-    val progressBar : ProgressBar by lazy {
+    val progressBar: ProgressBar by lazy {
         ProgressBar(this, null, android.R.attr.progressBarStyleSmall)
     }
 
@@ -49,6 +52,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     override fun onStart() {
         super.onStart()
         photoCapturePresenter.onStart()
+        EventBus.getDefault().register(this)
     }
 
     override fun onResume() {
@@ -59,6 +63,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     override fun onStop() {
         photoCapturePresenter.onDetach()
         super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onDestroy() {
@@ -70,9 +75,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         button_pick_picture.setOnClickListener(this)
         button_take_picture.setOnClickListener(this)
         button_upload_picture.setOnClickListener(this)
-        fab_clear.setOnClickListener(this)
-
-        coordinator_image_container.visibility = View.GONE
+        button_clear.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -92,7 +95,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
                 photoCapturePresenter.onUploadPictureButtonClicked()
             }
 
-            fab_clear -> {
+            button_clear -> {
                 photoCapturePresenter.onClearButtonClicked()
             }
         }
@@ -187,7 +190,8 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
     override fun makeViewsVisible(imageAvailable: Boolean) {
         if (imageAvailable) {
             // make views visible
-            coordinator_image_container.visibility = View.VISIBLE
+            button_clear.visibility = View.VISIBLE
+            image_view.visibility = View.VISIBLE
             button_upload_picture.visibility = View.VISIBLE
 
             // hide views
@@ -195,7 +199,8 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
             button_pick_picture.visibility = View.GONE
         } else {
             // Clear the image and toggle the view visibility
-            coordinator_image_container.visibility = View.GONE
+            button_clear.visibility = View.GONE
+            image_view.visibility = View.GONE
 
             button_pick_picture.visibility = View.VISIBLE
             button_take_picture.visibility = View.VISIBLE
@@ -234,28 +239,39 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         toast(R.string.msg_permission_denied)
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    override fun onReceiveUploadImageEvent(imageUploadEvent: ImageUploadEvent) {
+        if(imageUploadEvent.isUploading){
+            // TODO: material progressbar
+            progressBar.visibility = View.VISIBLE
+            progressBar.progress = 100 * imageUploadEvent.uploadProgress
+        }
+
+        if (imageUploadEvent.uploadSuccess) {
+            toast("Image Uploaded")
+            if (progressBar.isShown) {
+                progressBar.visibility = View.GONE
+            }
+
+            // proceed to results
+            // TODO: proceed to results
+
+        } else if (!imageUploadEvent.isUploading && !imageUploadEvent.uploadSuccess) {
+            toast("Image Failed to upload")
+            if (progressBar.isShown) {
+                progressBar.visibility = View.GONE
+            }
+        }
+    }
+
     override fun displayImageUploadProgressBar() {
         progressBar.visibility = View.VISIBLE
-        eventBusComponent.getImageUploadProgressSubject()
-                .subscribe({
-                    // display progress bar with percentages
-                    progressBar.progress = 100 * it
-                }, {
-                    progressBar.visibility = View.GONE
-                })
+
     }
 
     override fun displayImageUploadFailure() {
-        eventBusComponent.getImageUploadSubject()
-                .subscribe {
-                    if (it) {
-                        progressBar.visibility = View.GONE
-                        toast("Image Uploaded")
-                    } else {
-                        progressBar.visibility = View.GONE
-                        toast("Image failed to upload")
-                    }
-                }
+
+
     }
 
 }
