@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_button_upload_picture">Upload</string>
+    <string name="action_button_cancel_picture">Cancel</string>
+
+    <string name="action_button_pick_picture">Pick a Photo</string>
+    <string name="action_button_take_picture">Take Picture</string>
+
+    <string name="msg_permission_denied">Permission denied</string>
+    <string name="msg_delete_success">Image was deleted!</string>
+    <string name="msg_image_saved_location">Image Saved at %1$s</string>
+
+    <string name="error_image_not_saved">Image not saved!</string>
+    <string name="error_delete_failure">Image deletion failed</string>
+    <string name="error_finding_image">Error finding image</string>
+</resources>

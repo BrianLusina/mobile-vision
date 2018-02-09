@@ -12,9 +12,14 @@ import android.os.Build
 import android.support.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.auth.FirebaseAuth
+import com.mobile.vision.BuildConfig
 import com.mobile.vision.di.components.AppComponent
+import com.mobile.vision.di.components.DaggerAppComponent
 import com.mobile.vision.di.modules.AppModule
 import com.mobile.vision.di.modules.FirebaseModule
+import com.rollbar.notifier.Rollbar
+import com.rollbar.notifier.config.Config
+import com.rollbar.notifier.config.ConfigBuilder
 import io.fabric.sdk.android.Fabric
 import javax.inject.Inject
 
@@ -36,8 +41,7 @@ class MobileVisionApp : Application(){
         appComponent.injectApp(this)
 
         Fabric.with(this, Crashlytics())
-
-        logUser()
+        initRollbar()
 
         registerConnectivityManager()
     }
@@ -47,17 +51,12 @@ class MobileVisionApp : Application(){
         MultiDex.install(this)
     }
 
-    /**
-     * Logs the user to Crashlytics if the exist
-     * */
-    private fun logUser() {
-        val firebaseUser = firebaseAuth.currentUser
-
-        if(firebaseUser != null){
-            Crashlytics.setUserIdentifier(firebaseUser.uid)
-            Crashlytics.setUserEmail(firebaseUser.email)
-            Crashlytics.setUserName(firebaseUser.displayName)
-        }
+    private fun initRollbar(){
+        val config = ConfigBuilder
+                .withAccessToken(BuildConfig.ROLLBAR_ACCESS_TOKEN)
+                .environment(if(BuildConfig.DEBUG) "development" else "production")
+                .build()
+        Rollbar.init(config)
     }
 
     /**

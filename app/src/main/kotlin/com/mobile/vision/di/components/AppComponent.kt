@@ -2,12 +2,12 @@ package com.mobile.vision.di.components
 
 import android.app.Application
 import android.content.Context
-import com.mobile.vision.di.qualifier.AppCtxQualifier
 import com.mobile.vision.app.MobileVisionApp
 import com.mobile.vision.data.DataManager
 import com.mobile.vision.di.modules.ApiModule
 import com.mobile.vision.di.modules.AppModule
 import com.mobile.vision.di.modules.FirebaseModule
+import com.mobile.vision.di.qualifier.AppCtxQualifier
 import dagger.Component
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Named

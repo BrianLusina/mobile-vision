@@ -7,9 +7,9 @@ import com.chatbot.data.io.SchedulerProvider
 import com.chatbot.data.io.SchedulerProviderImpl
 import com.mobile.vision.di.qualifier.ActivityCtxQualifier
 import com.mobile.vision.di.scopes.ActivityScope
-import com.mobile.vision.ui.main.MainPresenter
-import com.mobile.vision.ui.main.MainPresenterImpl
-import com.mobile.vision.ui.main.MainView
+import com.mobile.vision.ui.photocapture.PhotoCapturePresenter
+import com.mobile.vision.ui.photocapture.PhotoCapturePresenterImpl
+import com.mobile.vision.ui.photocapture.PhotoCaptureView
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
@@ -44,7 +44,7 @@ class ActivityModule(val mActivity: AppCompatActivity) {
 
     @Provides
     @ActivityScope
-    fun provideMainPresenter(mainPresenter: MainPresenterImpl<MainView>): MainPresenter<MainView> {
-        return mainPresenter
+    fun provideMainPresenter(photoCapturePresenter: PhotoCapturePresenterImpl<PhotoCaptureView>): PhotoCapturePresenter<PhotoCaptureView> {
+        return photoCapturePresenter
     }
 }

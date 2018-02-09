@@ -5,4 +5,15 @@ package com.mobile.vision.data.api
  * @Notes Api Helper
  */
 interface ApiHelper {
+
+    /**
+     * Uploads image file to firebase Storage*/
+    fun uploadImageFile(filePath : String)
+
+    /**
+     * Retrieves data from the Vision API
+     * */
+    fun retrieveVisionApiData()
+
+    fun parseVisionApiResponse()
 }

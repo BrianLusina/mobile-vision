@@ -11,9 +11,11 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import com.mobile.vision.R
 import com.mobile.vision.app.MobileVisionApp
 import com.mobile.vision.di.components.ActivityComponent
 import com.mobile.vision.di.components.AppComponent
+import com.mobile.vision.di.components.DaggerActivityComponent
 import com.mobile.vision.di.modules.ActivityModule
 import org.jetbrains.anko.AnkoLogger
 
@@ -25,21 +27,21 @@ import org.jetbrains.anko.AnkoLogger
 
 abstract class BaseActivity : AppCompatActivity(), BaseView, BaseFragment.Callback, AnkoLogger {
 
-    // fields
-    lateinit var activityComponent: ActivityComponent
-
     val appComponent : AppComponent by lazy { (application as MobileVisionApp).appComponent }
+
+    // fields
+    val activityComponent: ActivityComponent by lazy{
+        DaggerActivityComponent.builder()
+                .activityModule(ActivityModule(this))
+                .appComponent(appComponent)
+                .build()
+    }
 
     override val loggerTag: String
         get() = super.loggerTag
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        activityComponent = DaggerActivityComponent.builder()
-                .activityModule(ActivityModule(this))
-                .appComponent(appComponent)
-                .build()
     }
 
     override fun onResume() {
@@ -64,18 +66,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseView, BaseFragment.Callba
      * activity  */
     public override fun onDestroy() {
         super.onDestroy()
-    }
-
-    override fun setPasswordError(errorMessage: Int) {
-        setPasswordError(getString(errorMessage))
-    }
-
-    override fun setPasswordError(errorMessage: String) {}
-
-    override fun setUsernameError(errorMessage: String) {}
-
-    override fun setUsernameError(errorMessage: Int) {
-        setUsernameError(getString(errorMessage))
     }
 
     /**

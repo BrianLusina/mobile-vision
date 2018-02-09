@@ -12,27 +12,6 @@ import android.support.annotation.StringRes
 interface BaseView {
 
     /**
-     * Sets an error on a form view
-     * password, username ...etc
-     * @param errorMessage Error Message to display the Username of the application
-     * */
-    fun setUsernameError(errorMessage: String)
-
-    /**
-     * Override of [setUsernameError]*/
-    fun setUsernameError(@StringRes errorMessage: Int)
-
-    /**
-     * Set Password Error on form field
-     * @param errorMessage */
-    fun setPasswordError(errorMessage: String)
-
-    /**
-     * Override of [setPasswordError]
-     * */
-    fun setPasswordError(@StringRes errorMessage: Int)
-
-    /**
      * Hides keyboard */
     fun hideKeyboard()
 
