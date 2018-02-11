@@ -14,14 +14,20 @@ exports.callVision = functions.storage.object().onChange(event => {
 	const gcsPath = `gs://${fileBucket}/${filePath}`;
 
 	// Prepare the request object
-    	let request = {
-		image: {source: {imageUri: gcsPath}},
-      		features: [
+	let request = {
+		image: {
+			source: {
+				imageUri: gcsPath
+			}
+		},
+		features: [
 			{ 
-				type: vision.v1.types.Feature.Type.WEB_DETECTION
+				type: "WEB_DETECTION",
+				maxResults: 1,
 			},
 			{ 
-				type: vision.v1.types.Feature.Type.SAFE_SEARCH_DETECTION 
+				type: "SAFE_SEARCH_DETECTION",
+				maxResults: 1,
 			}
 		],
 	};

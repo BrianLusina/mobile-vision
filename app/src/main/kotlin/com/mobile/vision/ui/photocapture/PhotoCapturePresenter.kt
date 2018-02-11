@@ -45,7 +45,7 @@ interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
     /**
      * Pick image request success and we take the file path uri and upload it
      * to VisionAPi*/
-    fun onPickImageRequestSuccess(filePath : Uri?)
+    fun onPickImageRequestSuccess(photoPathUri: Uri?)
 
     /**
      * Clears the given image if available
@@ -78,6 +78,11 @@ interface PhotoCapturePresenter<V : PhotoCaptureView> : BasePresenter<V> {
     /**
      * Request to resample picture
      * */
-    fun onResamplePicRequest()
+    fun onResampleCapturedImageRequest()
+
+    /**
+     * Request to resample picked gallery image
+     * */
+    fun onResamplePickedImageRequest(photoPathUri: Uri?)
 
 }
