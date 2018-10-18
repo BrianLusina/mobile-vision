@@ -1,7 +1,6 @@
 package com.mobile.vision.ui.photocapture
 
 import android.net.Uri
-import android.os.Bundle
 import com.chatbot.data.io.SchedulerProvider
 import com.mobile.vision.ui.base.BasePresenterImpl
 import com.mobile.vision.data.DataManager
@@ -33,11 +32,10 @@ constructor(mDataManager: DataManager,
         baseView.setupListeners()
     }
 
-    override fun onPickImageRequestSuccess(filePath: Uri?) {
-        // store the filepath to shared preference file
-        filePath?.toString()?.let { dataManager.saveImageFilePath(sharedPrefsKey, it) }
+    override fun onPickImageRequestSuccess(photoPathUri: Uri?) {
+        photoPathUri?.toString()?.let { dataManager.saveImageFilePath(sharedPrefsKey, it) }
         baseView.makeViewsVisible(true)
-        baseView.processAndSetImage()
+        baseView.processAndSetPickedImage(photoPathUri)
     }
 
     override fun onPickPictureButtonClicked() {
@@ -81,7 +79,7 @@ constructor(mDataManager: DataManager,
     }
 
     override fun onImageCaptureSuccess() {
-        baseView.processAndSetImage()
+        baseView.processAndSetCapturedImage()
     }
 
     override fun onActivityResultFailed() {
@@ -89,10 +87,15 @@ constructor(mDataManager: DataManager,
         dataManager.deleteImageFile(photoPath)
     }
 
-    override fun onResamplePicRequest() {
+    override fun onResampleCapturedImageRequest() {
         val photoPath = dataManager.getImageFilePath(sharedPrefsKey)
-        baseView.resamplePic(photoPath)
+        baseView.resampleCapturedImage(photoPath)
         // after resampling the pic, we can now make the picture visible
+        baseView.makeViewsVisible(true)
+    }
+
+    override fun onResamplePickedImageRequest(photoPathUri: Uri?) {
+        baseView.resamplePickedImage(photoPathUri)
         baseView.makeViewsVisible(true)
     }
 

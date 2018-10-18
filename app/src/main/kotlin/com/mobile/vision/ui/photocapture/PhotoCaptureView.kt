@@ -1,5 +1,6 @@
 package com.mobile.vision.ui.photocapture
 
+import android.net.Uri
 import com.mobile.vision.data.events.ImageUploadEvent
 import com.mobile.vision.ui.base.BaseView
 
@@ -39,7 +40,15 @@ interface PhotoCaptureView : BaseView {
      * */
     fun displayPermissionRationale()
 
-    fun processAndSetImage()
+    /**
+     * Processes and sets the captured image
+     * */
+    fun processAndSetCapturedImage()
+
+    /**
+     * Process and sets the image from the given photoPathUri that has been picked from gallery
+     * */
+    fun processAndSetPickedImage(photoPathUri: Uri?)
 
     fun displayImageUploadProgressBar()
 
@@ -63,10 +72,15 @@ interface PhotoCaptureView : BaseView {
     fun clearImage(isFileDeleted: Boolean)
 
     /**
-     * Resamples the given picture given the photo path
+     * Re-samples the given picture given the photo path
      * @param photoPath
      * */
-    fun resamplePic(photoPath: String)
+    fun resampleCapturedImage(photoPath: String)
+
+    /**
+     * Re-sample the picked image from gallery given the photoPath uri
+     * */
+    fun resamplePickedImage(photoPathUri: Uri?)
 
     /**
      * Subscriber method for the Image Upload event

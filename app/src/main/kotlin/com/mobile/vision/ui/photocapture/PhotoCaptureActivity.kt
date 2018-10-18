@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -20,14 +19,14 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.error
 import org.jetbrains.anko.toast
+import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
 
 class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListener {
 
-    private var mResultsBitmap: Bitmap? = null
-    private var filePath: Uri? = null
+    private var filePathUri: Uri? = null
 
     private val requestImageCapture = 1
     private val requestStoragePermission = 1
@@ -105,7 +104,7 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Pick a photo"), pickImageRequest)
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), pickImageRequest)
     }
 
     override fun takePicture() {
@@ -146,12 +145,11 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
                         photoCapturePresenter.onImageCaptureSuccess()
                     }
                     pickImageRequest -> {
-                        if (data != null) {
-                            filePath = checkNotNull(data.data)
+                        if (data != null && data.data != null) {
+                            filePathUri = checkNotNull(data.data)
                             try {
                                 try {
-                                    mResultsBitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
-                                    photoCapturePresenter.onPickImageRequestSuccess(filePath)
+                                    photoCapturePresenter.onPickImageRequestSuccess(filePathUri)
                                 } catch (ioe: IOException) {
                                     error("Error Retrieving Image with error ${ioe.message}")
                                     // todo: log to external service
@@ -208,13 +206,21 @@ class PhotoCaptureActivity : BaseActivity(), PhotoCaptureView, View.OnClickListe
         }
     }
 
-    override fun processAndSetImage() {
-        photoCapturePresenter.onResamplePicRequest()
+    override fun processAndSetCapturedImage() {
+        photoCapturePresenter.onResampleCapturedImageRequest()
     }
 
-    override fun resamplePic(photoPath: String) {
-        mResultsBitmap = resamplePicUtil(this, photoPath)
-        image_view.setImageBitmap(mResultsBitmap)
+    override fun processAndSetPickedImage(photoPathUri: Uri?) {
+        photoCapturePresenter.onResamplePickedImageRequest(photoPathUri)
+    }
+
+    override fun resampleCapturedImage(photoPath: String) {
+        val resultsBitmap = resamplePicUtil(this, photoPath)
+        image_view.setImageBitmap(resultsBitmap)
+    }
+
+    override fun resamplePickedImage(photoPathUri: Uri?) {
+        image_view.setImageBitmap(MediaStore.Images.Media.getBitmap(contentResolver, photoPathUri))
     }
 
     override fun clearImage(isFileDeleted: Boolean) {
